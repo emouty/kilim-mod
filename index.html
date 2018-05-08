@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="index.css"/>
+    <title>generated art</title>
+  </head>
+  <body>
+
+  <div class="example">
+    <canvas id="kocboynuzu" width="2000" height="2000"></canvas>
+  </div>
+
+    <!-- All of the Node.js APIs are available in this renderer process. -->
+  <script src="./js/Interpreter.js"></script>
+  <script src="./js/RuleEditor.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./schemas/schemas.js"></script>
+    <script>
+      // You can also require other files to run in this process
+
+      require('./renderer.js');
+
+      var kilimCanvas = document.getElementById('kocboynuzu');
+      var interpreter = new Interpreter(kilimCanvas, 45, 14);
+      var ruleEditor = new RuleEditor( interpreter, kocboynuzuAxiom, kocboynuzuSchema, 1);
+      /*.renderTo(
+        document.getElementById('kocboynuzu-settings')
+      );*/
+      //var ruleEditor = new RuleEditor( interpreter, axiom1, schema1, 1);
+      let ite = 1;
+      let randomRotation = false;
+      let randomLineLength = false;
+      let randomSchema = false;
+      let duration = 1000/20;
+      let interval;
+       function draw() {
+
+        if( ruleEditor.level === 30) {
+          ite=-1;
+        }
+        if( ruleEditor.level === 1){
+          ite=1;
+        }
+
+        if(randomRotation){
+          ruleEditor.angle= ruleEditor.angle+0.1
+          if(ruleEditor.angle >= 59.99 && ruleEditor.angle <= 60.01  ) {
+            randomRotation = false
+          }
+
+          if(ruleEditor.angle >= 360) {
+            ruleEditor.angle = 0;
+          }
+          console.log(ruleEditor.angle.toString());
+        }
+        if(randomLineLength){
+
+          ruleEditor.distance = ruleEditor.distance - ite/2;
+          if( ruleEditor.distance <= 0) ruleEditor.distance = 1;
+          if(ruleEditor.distance >= 30) ruleEditor.distance = 30;
+          //ruleEditor.interpreter = new Interpreter(kilimCanvas, 45, 14);
+
+        }
+        /*if(randomSchema) {
+          if (ruleEditor.axiom === elibelindeAxiom) {
+            ruleEditor.axiom = kocboynuzuAxiom;
+            ruleEditor.rules = kocboynuzuSchema;
+            clearInterval(interval);
+            duration= 1000/20;
+            inter();
+          } else {
+            ruleEditor.axiom = elibelindeAxiom;
+            ruleEditor.rules = elibelindeSchema;
+            clearInterval(interval);
+            duration= 1000/5;
+            inter();
+          }
+          randomSchema = false;
+        }*/
+        ruleEditor.level=ruleEditor.level+ite;
+
+
+        ruleEditor.run();
+        return ruleEditor
+      };
+      function inter() {
+         interval = setInterval(draw, duration);
+
+      }
+      inter();
+      setInterval(function () {
+          randomRotation =  Math.random() >= 0.5;
+          randomLineLength = Math.random() >= 0.5;
+          randomSchema = Math.random() >= 0.5;
+
+      }, 5000);
+
+      // default options
+      const options = {
+        colorMode: 'color',
+        compositeOperation: 'lighten',
+        iterationLimit: 0,
+        key: 'high',
+        lineWidth: 2,
+        lineMode: 'smooth',
+        origin: ['50%, 50%', 'top'],
+        outputSize: 'container',
+        pathFinderCount: 4,
+        speed: 0.1,
+        turningAngle: Math.PI
+      };
+
+      //resize to fit window
+      window.addEventListener('resize', resizeCanvas, false);
+      resizeCanvas(kilimCanvas);
+
+    </script>
+  </body>
+</html>
